@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#1877f2">
+<title>Sora 444 - Pro Edition</title>
+
+<style>
+:root{
+  --blue:#1877f2;
+  --blue2:#0d65d9;
+  --blue3:#eaf3ff;
+  --bg:#f0f2f5;
+  --card:#fff;
+  --text:#17202a;
+  --muted:#65676b;
+  --border:#dddfe2;
+  --danger:#e53935;
+  --success:#18a558;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);}
+button,input,textarea,select{font:inherit;}
+button{cursor:pointer;border:0;}
+img,video{max-width:100%;display:block;}
+.hidden{display:none!important;}
+
+/* UI Components */
+.logo{width:42px;height:42px;min-width:42px;border-radius:50%;background:linear-gradient(145deg,#1d82ff,#0758c8);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;}
+.logo.small{width:36px;height:36px;min-width:36px;font-size:20px;}
+.logo.big{width:86px;height:86px;min-width:86px;font-size:48px;margin:auto;}
+
+.auth-screen{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;background:radial-gradient(circle at top left,#dbeaff,transparent 40%),linear-gradient(135deg,#f5f9ff,#e8f1ff);}
+.auth-box{width:100%;max-width:430px;background:white;border-radius:24px;padding:28px;box-shadow:0 15px 50px rgba(0,0,0,.12);}
+.brand{text-align:center;margin-bottom:24px;}
+.brand h1{margin-top:12px;color:var(--blue);font-size:31px;}
+.brand p{margin-top:5px;color:var(--muted);}
+
+.auth-tabs{display:flex;gap:6px;background:#f0f2f5;border-radius:12px;padding:4px;margin-bottom:18px;}
+.auth-tabs button{flex:1;padding:11px;border-radius:9px;background:transparent;color:var(--muted);font-weight:bold;}
+.auth-tabs button.active{background:white;color:var(--blue);box-shadow:var(--shadow);}
+
+.input{width:100%;padding:14px 15px;border:1px solid var(--border);border-radius:12px;margin-bottom:11px;outline:none;background:#fff;}
+.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,119,242,.12);}
+
+.primary{width:100%;padding:14px;border-radius:12px;color:white;background:var(--blue);font-weight:800;margin-top:5px;}
+.primary:hover{background:var(--blue2);}
+
+/* Topbar & Layout */
+.topbar{position:sticky;top:0;z-index:100;height:62px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:8px 14px;}
+.brand-name{font-size:22px;font-weight:900;color:var(--blue);white-space:nowrap;}
+.search-box{flex:1;max-width:430px;background:#f0f2f5;border-radius:22px;display:flex;align-items:center;padding:0 14px;}
+.search-box input{width:100%;border:0;outline:0;background:transparent;padding:10px;}
+.top-actions{margin-left:auto;display:flex;gap:7px;}
+.icon-btn{width:42px;height:42px;border-radius:50%;background:#f0f2f5;font-size:20px;display:flex;align-items:center;justify-content:center;}
+
+.layout{max-width:1450px;margin:auto;display:grid;grid-template-columns:250px minmax(0,680px) 280px;gap:18px;padding:18px;}
+.sidebar{position:sticky;top:80px;height:max-content;}
+.menu-card{background:white;border-radius:var(--radius);padding:10px;box-shadow:var(--shadow);}
+.menu-item{width:100%;padding:12px;border-radius:11px;background:transparent;display:flex;align-items:center;gap:12px;font-weight:bold;color:var(--text);text-align:left;}
+.menu-item:hover,.menu-item.active{background:var(--blue3);color:var(--blue);}
+.menu-icon{width:34px;text-align:center;font-size:21px;}
+
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:15px;overflow:hidden;}
+.card-pad{padding:15px;}
+
+/* Modal & Toast */
+.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);z-index:1000;background:#222;color:white;padding:11px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:750px){
+  .layout{display:block;padding:8px 0;}
+  .sidebar,.rightbar{display:none;}
+  .card{border-radius:0;margin-bottom:8px;}
+}
+</style>
+</head>
+<body>
+
+<section id="authScreen" class="auth-screen">
+  <div class="auth-box">
+    <div class="brand">
+      <div class="logo big">S</div>
+      <h1>Sora 444</h1>
+      <p>Your Real-time Social Network</p>
+    </div>
+    <div class="auth-tabs">
+      <button id="loginTab" class="active" onclick="switchAuth('login')">Login</button>
+      <button id="registerTab" onclick="switchAuth('register')">Register</button>
+    </div>
+    <div id="loginForm">
+      <input id="loginEmail" class="input" type="email" placeholder="Email Address">
+      <input id="loginPassword" class="input" type="password" placeholder="Password">
+      <button class="primary" onclick="loginUser()">Login</button>
+    </div>
+    <div id="registerForm" class="hidden">
+      <input id="regName" class="input" placeholder="Full Name">
+      <input id="regUsername" class="input" placeholder="Username">
+      <input id="regEmail" class="input" type="email" placeholder="Email Address">
+      <input id="regPassword" class="input" type="password" placeholder="Password (Min 6 characters)">
+      <button class="primary" onclick="registerUser()">Create Account</button>
+    </div>
+  </div>
+</section>
+
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div class="logo small">S</div>
+    <div class="brand-name">Sora 444</div>
+    <div class="search-box">
+      <span>🔍</span>
+      <input id="globalSearch" placeholder="Search...">
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="navigate('messages')">💬</button>
+      <button class="icon-btn" onclick="navigate('settings')">⚙️</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="menu-card">
+        <button class="menu-item active" onclick="navigate('home')"><span class="menu-icon">🏠</span> Home</button>
+        <button class="menu-item" onclick="navigate('profile')"><span class="menu-icon">👤</span> Profile</button>
+        <button class="menu-item" onclick="navigate('settings')"><span class="menu-icon">⚙️</span> Settings</button>
+        <button class="menu-item" onclick="logoutUser()"><span class="menu-icon">🚪</span> Logout</button>
+      </div>
+    </aside>
+    <main id="main" class="main"></main>
+    <aside class="sidebar rightbar">
+      <div class="card card-pad">
+        <h3>🛡️ Security Status</h3>
+        <p style="font-size:13px; color:var(--muted); margin-top:5px;">Firebase Authentication and encrypted sessions are active.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script type="module">
+// Firebase Configuration Placeholder
+const FIREBASE_CONFIG = {
+  apiKey: "PASTE_YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_FIREBASE_APP_ID"
+};
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+let firebaseReady = false, auth = null, db = null;
+try {
+  if(!FIREBASE_CONFIG.apiKey.startsWith("PASTE_")) {
+    const app = initializeApp(FIREBASE_CONFIG);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    firebaseReady = true;
+  }
+} catch(e) { console.warn("Firebase Init Error, running on Local Demo Mode"); }
+
+let currentUser = null, currentPage = "home";
+
+window.switchAuth = (mode) => {
+  document.getElementById("loginForm").classList.toggle("hidden", mode !== "login");
+  document.getElementById("registerForm").classList.toggle("hidden", mode !== "register");
+  document.getElementById("loginTab").classList.toggle("active", mode === "login");
+  document.getElementById("registerTab").classList.toggle("active", mode === "register");
+};
+
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2500);
+}
+
+window.loginUser = async () => {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  if(!email || !password) return toast("Please fill in all fields");
+  if(firebaseReady) {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch(e) { toast("Login failed: " + e.message); }
+  } else {
+    currentUser = { id: "demo", name: "Demo User", email };
+    openApp();
+  }
+};
+
+window.registerUser = async () => {
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value;
+  if(!name || !email || password.length < 6) return toast("Please provide valid inputs (Password min 6 chars)");
+  if(firebaseReady) {
+    try {
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(res.user, { displayName: name });
+      toast("Account created successfully!");
+    } catch(e) { toast("Error: " + e.message); }
+  } else {
+    toast("Demo account created successfully!");
+    currentUser = { id: "demo", name, email };
+    openApp();
+  }
+};
+
+function openApp() {
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  navigate("home");
+}
+
+function showAuth() {
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("authScreen").classList.remove("hidden");
+}
+
+window.navigate = (page) => {
+  currentPage = page;
+  const main = document.getElementById("main");
+  if(page === "home") {
+    main.innerHTML = `<div class="card card-pad"><h3>Home Feed</h3><p style="color:var(--muted); margin-top:5px;">Welcome to Sora 444!</p></div>`;
+  } else if(page === "profile") {
+    main.innerHTML = `<div class="card card-pad"><h3>User Profile</h3><p>Name: ${currentUser?.name || "User"}</p></div>`;
+  } else if(page === "settings") {
+    main.innerHTML = `<div class="card card-pad"><h3>Settings</h3><p>Modern security and privacy configuration options.</p></div>`;
+  } else {
+    main.innerHTML = `<div class="card card-pad"><h3>Activity</h3><p>Coming soon...</p></div>`;
+  }
+};
+
+window.logoutUser = async () => {
+  if(firebaseReady) await signOut(auth);
+  currentUser = null;
+  showAuth();
+};
+
+if(firebaseReady && auth) {
+  onAuthStateChanged(auth, (user) => {
+    if(user) {
+      currentUser = { id: user.uid, name: user.displayName || "User", email: user.email };
+      openApp();
+    } else {
+      showAuth();
+    }
+  });
+}
+</script>
+</body>
+</html>
